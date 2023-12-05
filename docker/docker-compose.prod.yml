@@ -1,0 +1,66 @@
+version: "3.8"
+
+# Configuration file that should be used in production environment.
+# ONLY this configuration is necessary in production
+
+services:
+  nginx-proxy:
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+    image: sw714/inciport-registry:nginx-proxy
+    restart: always
+    build: .
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+    ports:
+      - 443:443
+    networks:
+      - nginx-proxy-network
+
+  website:
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+    image: sw714/inciport-registry:prod
+    networks:
+      - nginx-proxy-network
+    expose:
+      - 3000
+    restart: always
+
+  database:
+    image: postgres # Use latest official postgres version
+    # Demo login
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+    networks:
+      - internal_network
+    restart: always
+
+  webservice:
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+    image: sw714/inciport-registry:api-prod
+    depends_on:
+      - database
+    environment:
+      - HOST=Docker
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - internal_network
+      - nginx-proxy-network
+    expose:
+      - 5000
+    restart: always
+
+# Creates named networks if not already exists.
+networks:
+  nginx-proxy-network:
+    name: nginx-proxy-network
+  internal_network:

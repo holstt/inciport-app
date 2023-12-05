@@ -1,0 +1,48 @@
+version: "3.8"
+
+# Configuration file for building all services.
+# This file is ALWAYS part of the configuration if
+# the default command is run i.e. docker-compose up
+
+services:
+  website:
+    restart: on-failure
+    build:
+      context: ..
+      dockerfile: inciport-website/Dockerfile
+      args:
+        - FOLDER=inciport-website
+    ports:
+      # Map to host in dev
+      - 127.0.0.1:3000:3000
+    profiles: ["website"]
+
+  database:
+    restart: on-failure
+    ports:
+      # Map to host in dev
+      - 127.0.0.1:5432:5432
+    profiles: ["webservice"]
+
+  webservice:
+    restart: on-failure
+    build:
+      context: ..
+      dockerfile: inciport-webservice/Dockerfile
+      args:
+        - FOLDER=inciport-webservice
+        - SLN=InciportWebService
+        - P1=Api
+        - P2=Application
+        - P3=Domain
+        - P4=Data
+        - P5=UnitTests
+        - P6=IntegrationTests
+        - START_P=Api
+    environment:
+      # - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
+    ports:
+      # Map to host in dev
+      - 127.0.0.1:5000:5000
+    profiles: ["webservice"]

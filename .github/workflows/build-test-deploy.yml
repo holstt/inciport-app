@@ -1,0 +1,108 @@
+# Reusable pipeline to build, test and deploy a service
+name: build-test-deploy
+
+on:
+  workflow_call:
+    inputs:
+      docker-profile:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+    secrets:
+      dockerhub-username:
+        required: true
+      dockerhub-token:
+        required: true
+      ssh-password:
+        required: true
+      ssh-username:
+        required: true
+      ssh-host:
+        required: true
+
+jobs:
+  build-test-deploy:
+    env:
+      BASE_DOMAIN: inciport.rocks
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Print profile"
+        run: |
+          echo "Profile is ${{ inputs.docker-profile }}"
+
+      # Enable slug action in order to get slug of branch name
+      - uses: gacts/github-slug@v1
+        id: slug
+
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.dockerhub-username }}
+          password: ${{ secrets.dockerhub-token }}
+
+      - name: Test
+        working-directory: docker
+        run: docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml ${{ inputs.docker-profile }} build
+        env:
+          BRANCH_NAME: ${{ steps.slug.outputs.branch-name-slug }}
+
+      - name: Build
+        working-directory: docker
+        run: docker-compose ${{ inputs.docker-profile }} build
+        env:
+          BRANCH_NAME: ${{ steps.slug.outputs.branch-name-slug }}
+
+      - name: Push assets to registry
+        working-directory: docker
+        run: docker-compose ${{ inputs.docker-profile }} push
+        env:
+          BRANCH_NAME: ${{ steps.slug.outputs.branch-name-slug }}
+
+      # Get public key of host using ssh-keyscan and store it in known hosts to be able to use ssh in following
+      - name: Set known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ secrets.ssh-host }}  >> ~/.ssh/known_hosts
+
+      # Copy compose file to server via SSH
+      - name: Deploy - Upload docker-compose files
+        working-directory: docker
+        run: sshpass -p '${{ secrets.ssh-password }}' rsync -av . ${{ secrets.ssh-username }}@${{ secrets.ssh-host }}:~/${{ steps.slug.outputs.branch-name-slug }}
+
+      # Copy compose test images to server via SSH
+      - name: Deploy - Upload image test files
+        working-directory: inciport-webservice/InciportWebService.Api/images
+        run: |
+          sshpass -p '${{ secrets.ssh-password }}' ssh ${{ secrets.ssh-username }}@${{ secrets.ssh-host }} mkdir -p ${{ steps.slug.outputs.branch-name-slug }}/inciport-webservice/InciportWebService.Api/images
+          sshpass -p '${{ secrets.ssh-password }}' rsync -av . ${{ secrets.ssh-username }}@${{ secrets.ssh-host }}:~/${{ steps.slug.outputs.branch-name-slug }}/inciport-webservice/InciportWebService.Api/images
+
+      # Pull from registry and run on server via SSH
+      - name: Deploy - Pull and run
+        uses: appleboy/ssh-action@master
+        env:
+          BRANCH_NAME: ${{ steps.slug.outputs.branch-name-slug }}
+          DOCKER_PROFILE: ${{ inputs.docker-profile }}
+          DOCKERHUB_USERNAME: ${{ secrets.dockerhub-username }}
+          DOCKERHUB_TOKEN: ${{ secrets.dockerhub-token }}
+        with:
+          host: ${{ secrets.ssh-host }}
+          username: ${{ secrets.ssh-username }}
+          password: ${{ secrets.ssh-password }}
+          script: |
+            export BRANCH_NAME
+            export DOCKER_PROFILE
+            docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
+            cd ${BRANCH_NAME}
+            echo branch name is ${BRANCH_NAME}
+            echo service anme is ${DOCKER_PROFILE}
+            docker-compose ${DOCKER_PROFILE} pull
+            docker-compose -f docker-compose.yml -f docker-compose.${{ inputs.environment }}.yml ${DOCKER_PROFILE} up -d
+          envs: BRANCH_NAME, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, DOCKER_PROFILE
+
+      - name: Print deploy domain
+        run: echo "The service should be available at ${{ steps.slug.outputs.branch-name-slug }}.${BASE_DOMAIN} or api-${{ steps.slug.outputs.branch-name-slug }}.${BASE_DOMAIN}"

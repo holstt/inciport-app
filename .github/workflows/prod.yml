@@ -1,0 +1,170 @@
+# Production pipeline: Build, test, push and deploy to docker swarm cluster
+
+name: prod
+
+on:
+  push:
+    branches:
+      - "**main**"
+
+jobs:
+  webservice-test:
+    env:
+      BASE_DOMAIN: inciport.rocks
+      DOCKER_BUILDKIT: 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Test
+        working-directory: docker
+        run: docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml --profile webservice build
+        env:
+          BRANCH_NAME: prod
+
+  website-test:
+    env:
+      BASE_DOMAIN: inciport.rocks
+      DOCKER_BUILDKIT: 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Test
+        working-directory: docker
+        run: docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml --profile website build
+        env:
+          BRANCH_NAME: prod
+
+  website-build:
+    env:
+      BASE_DOMAIN: inciport.rocks
+      DOCKER_BUILDKIT: 1
+    runs-on: ubuntu-latest
+    needs: website-test
+    if: ${{ always() }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build
+        working-directory: docker
+        run: docker-compose --profile website build
+        env:
+          BRANCH_NAME: prod
+
+      - name: Push images to registry
+        working-directory: docker
+        run: docker-compose --profile website push
+        env:
+          BRANCH_NAME: prod
+
+  webservice-build:
+    env:
+      BASE_DOMAIN: inciport.rocks
+      DOCKER_BUILDKIT: 1
+    runs-on: ubuntu-latest
+    needs: webservice-test
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build
+        working-directory: docker
+        run: docker-compose --profile webservice build
+        env:
+          BRANCH_NAME: prod
+
+      - name: Push images to registry
+        working-directory: docker
+        run: docker-compose --profile webservice push
+        env:
+          BRANCH_NAME: prod
+
+  nginx-build:
+    env:
+      BASE_DOMAIN: inciport.rocks
+      DOCKER_BUILDKIT: 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build
+        working-directory: docker
+        run: docker-compose -f docker-compose.prod.yml build nginx-proxy
+
+      - name: Push images to registry
+        working-directory: docker
+        run: docker-compose -f docker-compose.prod.yml push nginx-proxy
+
+  system-deploy:
+    needs:
+      - webservice-build
+      - website-build
+      - nginx-build
+    if: ${{ always() }} # XXX: Hack for nu...
+    env:
+      BASE_DOMAIN: inciport.rocks
+      DOCKER_BUILDKIT: 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Get public key of host using ssh-keyscan and store it in known hosts to be able to use ssh in following
+      - name: Set known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ secrets.SSH_HOST_SWARM  }}  >> ~/.ssh/known_hosts
+
+      # Copy compose file to server via SSH
+      - name: Deploy - Upload docker-compose files
+        working-directory: docker
+        run: sshpass -p '${{ secrets.SSH_PASSWORD}}' rsync -av . ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST_SWARM  }}:~/prod
+
+      # Pull all images built in pipeline from registry and run on server via SSH
+      - name: Deploy - Pull and run
+        uses: appleboy/ssh-action@master
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME  }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_BUILDKIT: 1
+        with:
+          host: ${{ secrets.SSH_HOST_SWARM  }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
+            cd prod
+            docker stack deploy --compose-file docker-compose.prod.yml inciport --with-registry-auth
+          envs: DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, DOCKER_BUILDKIT
+
+      - name: Print deploy domain
+        run: echo "The service should be available at ${{ steps.slug.outputs.branch-name-slug }}.${BASE_DOMAIN}"

@@ -1,0 +1,13 @@
+version: "3.8"
+
+# Include this file in the configuration, when Docker image layers
+# that run tests should be targeted. This will run the tests
+# and then exit immediatly after.
+
+services:
+  webservice:
+    build:
+      target: test
+  website:
+    build:
+      target: test

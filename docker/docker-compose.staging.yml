@@ -1,0 +1,25 @@
+version: "3.8"
+
+# Staging configuration file for all services.
+# This file is should be part of the configuration when
+# system is run on the staging/development server
+
+services:
+  website:
+    restart: always
+    environment:
+      - VIRTUAL_HOST=${BRANCH_NAME}.inciport.rocks
+      - LETSENCRYPT_HOST=${BRANCH_NAME}.inciport.rocks
+    profiles: ["website"]
+
+  database:
+    restart: always
+    profiles: ["webservice"]
+
+  webservice:
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - VIRTUAL_HOST=api-${BRANCH_NAME}.inciport.rocks
+      - LETSENCRYPT_HOST=api-${BRANCH_NAME}.inciport.rocks
+    profiles: ["webservice"]

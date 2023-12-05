@@ -1,0 +1,15 @@
+.ContactInformationElementContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    overflow:auto;
+}
+
+.ContactInformationContainer {
+    margin-top: 35px;
+}
+
+
+.ContactElementLabel {
+    align-self: center;
+}

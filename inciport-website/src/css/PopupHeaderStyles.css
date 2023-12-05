@@ -1,0 +1,21 @@
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.CloseButton {
+    position:absolute; 
+    top:0; 
+    right:0;
+	align-self: center;
+    display: inline-flex;
+    align-items: center;
+    padding: 2px !important;
+    border: 0 !important;
+    margin: 10px;
+}
+
+.HeaderMessage {
+    font-size: 20px;
+    font-weight: bold;
+}

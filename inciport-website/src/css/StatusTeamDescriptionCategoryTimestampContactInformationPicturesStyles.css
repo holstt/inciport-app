@@ -1,0 +1,5 @@
+.StatusTeamDescriptionCategoryTimestampContactInformationPicturesContainer {
+    display: grid;
+    flex: 2;
+    margin-right: 20px;
+}

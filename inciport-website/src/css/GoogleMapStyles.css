@@ -1,0 +1,30 @@
+.MapContainerClass {
+    display: block;
+    flex: 1;
+    margin-left: 20px;
+    height: 750px;
+    width: 750px;
+}
+
+.MapText {
+    display: inline;
+    margin-right: 10px;
+    background-color: #F1F1F1;
+    border-radius: 5px;
+    padding: 5px;
+    width: fit-content;
+}
+
+.MapDiv {
+    margin-bottom: 10px;
+}
+
+.InlineText {
+    display: inline;
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+.MapContainer {
+    margin-top: 20px;
+}

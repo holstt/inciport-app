@@ -1,0 +1,15 @@
+.TimeStampContainer {
+    flex: 1.5;
+}
+
+.TimeStampMessage {
+    margin-left: 10px;
+}
+
+.TimeStamp {
+    background-color: #F1F1F1;
+    border-radius: 5px;
+    padding: 10px;
+    margin-left: 10px;
+    width: fit-content;
+}

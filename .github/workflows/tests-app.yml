@@ -1,0 +1,17 @@
+name: tests-app
+
+on:
+  push:
+    branches:
+      - "**app**"
+
+jobs:
+  flutter-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Test
+        working-directory: inciport-app/inciport_app
+        run: docker build .

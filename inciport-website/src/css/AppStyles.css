@@ -1,0 +1,14 @@
+.logo-image {
+    width: 46px;
+    height: 46px;
+    margin-top: -10px;
+}
+
+.img-fluid {
+    border-radius: 10%;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}

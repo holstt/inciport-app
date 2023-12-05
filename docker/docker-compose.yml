@@ -1,0 +1,51 @@
+version: "3.8"
+
+# Base configuration file for all services.
+# This file is ALWAYS part of the configuration if
+# the default command is run i.e. docker-compose up
+
+services:
+  website:
+    image: sw714/inciport-registry:${BRANCH_NAME}
+    networks:
+      - nginx-proxy-network
+    expose:
+      - 3000 # For nginx proxy to find listen port
+
+  database:
+    image: postgres # Use latest official postgres version
+    volumes:
+      - inciport_database:/var/lib/postgresql/data/ # Persist data even if container shuts down
+    # Demo login
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+    networks:
+      - internal_network
+
+  webservice:
+    image: sw714/inciport-registry:api-${BRANCH_NAME}
+    depends_on:
+      - database
+    environment:
+      - HOST=Docker
+    volumes:
+      # Map image folder on disk on Docker host to image folder inside container.
+      - ./inciport-webservice/InciportWebService.Api/images:/app/images
+    networks:
+      - internal_network
+      - nginx-proxy-network
+    expose:
+      - 5000 # For nginx proxy to find listen port
+
+volumes:
+  inciport_database:
+
+# Creates named networks if not already exists.
+networks:
+  nginx-proxy-network:
+    name: nginx-proxy-network
+  # This is an internal netowkr that will get created for each docker-compose project
+  # Project name == folder name this docker-compose file is placed in
+  # The name of the network will be <project_name>_internal_network
+  internal_network:

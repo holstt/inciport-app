@@ -1,0 +1,82 @@
+{
+  "name": "inciport-website",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@googleapis/docs": "^0.2.0",
+    "@googlemaps/jest-mocks": "^1.5.0",
+    "@googlemaps/react-wrapper": "^1.1.16",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@mui/icons-material": "^5.2.4",
+    "@mui/material": "^5.2.4",
+    "@mui/styled-engine-sc": "^5.1.0",
+    "@react-google-maps/api": "^2.5.0",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^12.20.27",
+    "@types/react": "^17.0.24",
+    "@types/react-bootstrap": "^0.32.28",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-modal": "^3.13.1",
+    "@types/react-router-bootstrap": "^0.24.5",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.5",
+    "axios": "^0.24.0",
+    "bootstrap": "^4.6.0",
+    "chai": "^4.3.4",
+    "chokidar": "^3.5.2",
+    "dotenv": "^10.0.0",
+    "enzyme": "^3.11.0",
+    "faker": "^5.5.3",
+    "formik": "^2.2.9",
+    "googleapis": "^89.0.0",
+    "nock": "^13.2.1",
+    "react": "^17.0.2",
+    "react-bootstrap": "^2.0.0",
+    "react-data-table-component": "^7.4.5",
+    "react-dom": "^17.0.2",
+    "react-modal": "^3.14.4",
+    "react-router-bootstrap": "^0.25.0",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "4.0.3",
+    "reactjs-popup": "^2.0.5",
+    "reactstrap": "^8.4.1",
+    "sinon": "^12.0.1",
+    "styled-components": "^5.3.3",
+    "typescript-json-serializer": "^3.4.4",
+    "web-vitals": "^1.1.2",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "jest-google-maps-mock": "^1.0.7",
+    "typescript": "^4.4.4"
+  }
+}

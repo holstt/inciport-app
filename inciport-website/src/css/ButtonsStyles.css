@@ -1,0 +1,22 @@
+.ButtonsContainer {
+    display: flex;
+    float:right;
+}
+
+.EditPageButtons{
+    margin: 10px;
+    padding: 5px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
+.IconTextButton {
+    display: flex !important;
+    align-items: center;
+    text-align: center !important;
+}
+
+
+.TextIconTextButton {
+    margin-left: 5px;
+}

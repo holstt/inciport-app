@@ -1,0 +1,52 @@
+version: "3.8"
+
+# This is the nginx proxy running on the staging/development server.
+# The proxy automically discovers and auto-generates a nginx config file
+# for each container that gets deployed on the server.
+
+# This should be set up on the server before deploying any containers.
+
+services:
+  nginx-proxy:
+    restart: always
+    container_name: nginx-proxy
+    image: nginxproxy/nginx-proxy
+    networks:
+      - nginx-proxy-network
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    ports:
+      - 80:80
+      - 443:443
+    expose:
+      - 443
+
+  # Generates SSL certificates
+  acme-companion:
+    restart: always
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    networks:
+      - nginx-proxy-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/etc/acme.sh
+      - certs:/etc/nginx/certs:rw
+    volumes_from:
+      - nginx-proxy
+    environment:
+      - DEFAULT_EMAIL=XXX
+
+volumes:
+  acme:
+  certs:
+  vhost:
+  html:
+
+# Create named network if not already exists.
+networks:
+  nginx-proxy-network:
+    name: nginx-proxy-network
