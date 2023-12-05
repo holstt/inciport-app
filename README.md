@@ -1,10 +1,10 @@
 # Inciport
 
-[![prod](https://github.com/holstt/inciport-app/actions/workflows/prod.yml/badge.svg)](https://github.com/holstt/inciport/actions/workflows/prod.yml)
+[![prod](https://github.com/holstt/inciport-app/actions/workflows/prod.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/prod.yml)
 
-[![tests-app](https://github.com/holstt/inciport-app/actions/workflows/tests-app.yml/badge.svg)](https://github.com/holstt/inciport/actions/workflows/tests-app.yml)
-[![staging-webservice](https://github.com/holstt/inciport-app/actions/workflows/staging-webservice.yml/badge.svg)](https://github.com/holstt/inciport/actions/workflows/staging-webservice.yml)
-[![staging-website](https://github.com/holstt/inciport-app/actions/workflows/staging-website.yml/badge.svg)](https://github.com/holstt/inciport/actions/workflows/staging-website.yml)
+[![tests-app](https://github.com/holstt/inciport-app/actions/workflows/tests-app.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/tests-app.yml)
+[![staging-webservice](https://github.com/holstt/inciport-app/actions/workflows/staging-webservice.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/staging-webservice.yml)
+[![staging-website](https://github.com/holstt/inciport-app/actions/workflows/staging-website.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/staging-website.yml)
 
 ## About
 
