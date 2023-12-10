@@ -1,14 +1,12 @@
 # Inciport
 
-[![prod](https://github.com/holstt/inciport-app/actions/workflows/prod.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/prod.yml)
-
-[![tests-app](https://github.com/holstt/inciport-app/actions/workflows/tests-app.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/tests-app.yml)
 [![staging-webservice](https://github.com/holstt/inciport-app/actions/workflows/staging-webservice.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/staging-webservice.yml)
 [![staging-website](https://github.com/holstt/inciport-app/actions/workflows/staging-website.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/staging-website.yml)
+[![tests-app](https://github.com/holstt/inciport-app/actions/workflows/tests-app.yml/badge.svg)](https://github.com/holstt/inciport-app/actions/workflows/tests-app.yml)
 
 ## About
 
-An incident report service developed as a part of our P7 semester project on AAU (MSc in Software Engineering).
+**Inciport** is an incident report service developed as part of our P7 semester project at AAU (MSc in Software Engineering)
 
 The project aims to make it easy for citizens to report incidents to their local municipality using a smartphone. The focus has been on making a dynamic solution rather than a static system only tailored for one particular municipality. The system is designed such that it is possible to create new municipalities, with each municipality having its own users and custom categories.
 
