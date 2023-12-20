@@ -5,16 +5,18 @@ on:
     branches:
       - dev
       - "**webservice**"
+      - "**cicd**"
 
 jobs:
   webservice:
-    uses: holstt/inciport/.github/workflows/build-test-deploy.yml@dev
+    uses: ./.github/workflows/build-test-deploy.yml
     with:
       docker-profile: --profile webservice
       environment: staging
-    secrets:
-      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-      ssh-password: ${{ secrets.SSH_PASSWORD }}
-      ssh-username: ${{ secrets.SSH_USERNAME }}
-      ssh-host: ${{ secrets.SSH_HOST }}
+    secrets: inherit
+    # secrets:
+    #   dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+    #   dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    #   ssh-password: ${{ secrets.SSH_PASSWORD }}
+    #   ssh-username: ${{ secrets.SSH_USERNAME }}
+    #   ssh-host: ${{ secrets.SSH_HOST }}
