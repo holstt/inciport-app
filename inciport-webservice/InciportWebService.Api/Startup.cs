@@ -21,9 +21,11 @@ namespace InciportWebService.Api {
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services) {
       Console.WriteLine("Configuring services...");
+
       // Add DAO to services container
-      services.AddCustomDbContextInterface(Configuration.GetConnectionString("Default"));
-      services.AddCustomDbContext(Configuration.GetConnectionString("Default")); // To make Identity (authencitation) happy (expects the concrete implementation!)
+      var connectionString = Configuration.GetConnectionString("Default");
+      services.AddCustomDbContextInterface(connectionString);
+      services.AddCustomDbContext(connectionString); // To make Identity (authencitation) happy (expects the concrete implementation!)
 
       services.AddControllers(options => options.Filters.Add<ApplicationExceptionFilter>());
 
@@ -51,7 +53,6 @@ namespace InciportWebService.Api {
       services.AddScoped<IImageService, ImagesService>();
       services.AddScoped<IImageSaver, ImageSaver>();
       services.AddScoped<IFileService, FileService>();
-
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

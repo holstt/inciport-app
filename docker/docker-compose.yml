@@ -18,8 +18,8 @@ services:
       - inciport_database:/var/lib/postgresql/data/ # Persist data even if container shuts down
     # Demo login
     environment:
-      - POSTGRES_USER=test
-      - POSTGRES_PASSWORD=test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=demo_secret
     networks:
       - internal_network
 
@@ -45,7 +45,7 @@ volumes:
 networks:
   nginx-proxy-network:
     name: nginx-proxy-network
-  # This is an internal netowkr that will get created for each docker-compose project
+  # This is an internal network that will get created for each docker-compose project
   # Project name == folder name this docker-compose file is placed in
   # The name of the network will be <project_name>_internal_network
   internal_network:

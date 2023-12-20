@@ -35,8 +35,8 @@ services:
     image: postgres # Use latest official postgres version
     # Demo login
     environment:
-      - POSTGRES_USER=test
-      - POSTGRES_PASSWORD=test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=demo_secret
     networks:
       - internal_network
     restart: always

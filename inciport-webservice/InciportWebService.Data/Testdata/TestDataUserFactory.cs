@@ -33,7 +33,7 @@ namespace InciportWebService.Data {
       UserRegistrationDto demoUser = new UserRegistrationDto {
         FullName = $"Demo User {role}",
         Email = $"{role.ToLower()}@test.com",
-        Password = "test",
+        Password = "Demo_123",
         Role = role,
       };
 
@@ -61,7 +61,7 @@ namespace InciportWebService.Data {
       UserRegistrationDto maintainer = new UserRegistrationDto {
         FullName = $"Martin Maintainer",
         Email = "maintainer-test@test.com",
-        Password = "test",
+        Password = "Demo_123",
         Role = UserRoles.MAINTAINER,
       };
 
@@ -72,7 +72,7 @@ namespace InciportWebService.Data {
       UserRegistrationDto admin = new UserRegistrationDto {
         FullName = $"Anders Admin {municipality.Name}",
         Email = $"admin-{municipality.Name.ToLower()}@test.com",
-        Password = "test",
+        Password = "Demo_123",
         Role = UserRoles.ADMIN,
       };
 
@@ -83,7 +83,7 @@ namespace InciportWebService.Data {
       UserRegistrationDto manager = new UserRegistrationDto {
         FullName = $"Marianne Manager {municipality.Name}",
         Email = $"manager-{municipality.Name.ToLower()}@test.com",
-        Password = "test",
+        Password = "Demo_123",
         Role = UserRoles.MANAGER,
       };
 
