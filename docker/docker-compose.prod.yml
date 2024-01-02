@@ -9,7 +9,7 @@ services:
       replicas: 3
       placement:
         max_replicas_per_node: 1
-    image: sw714/inciport-registry:nginx-proxy
+    image: ${DOCKERHUB_REPO?}:nginx-proxy
     restart: always
     build: .
     volumes:
@@ -24,7 +24,7 @@ services:
       replicas: 3
       placement:
         max_replicas_per_node: 1
-    image: sw714/inciport-registry:prod
+    image: ${DOCKERHUB_REPO?}:latest-website
     networks:
       - nginx-proxy-network
     expose:
@@ -46,7 +46,7 @@ services:
       replicas: 3
       placement:
         max_replicas_per_node: 1
-    image: sw714/inciport-registry:api-prod
+    image: ${DOCKERHUB_REPO?}:latest-webservice
     depends_on:
       - database
     environment:

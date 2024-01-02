@@ -7,16 +7,13 @@ on:
     branches:
       - dev
       - "**website**"
+      - "**cicd**"
 
 jobs:
   website:
-    uses: holstt/inciport/.github/workflows/build-test-deploy.yml@dev
+    uses: ./.github/workflows/build-test-deploy.yml
     with:
-      docker-profile: --profile website
-      environment: staging
-    secrets:
-      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
-      ssh-password: ${{ secrets.SSH_PASSWORD }}
-      ssh-username: ${{ secrets.SSH_USERNAME }}
-      ssh-host: ${{ secrets.SSH_HOST }}
+      project_dir: inciport-website
+      build_args: |
+        FOLDER=inciport-website
+    secrets: inherit
