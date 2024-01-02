@@ -6,11 +6,11 @@ version: "3.8"
 
 services:
   website:
-    image: sw714/inciport-registry:${BRANCH_NAME}
+    image: ${DOCKERHUB_REPO?}:${BRANCH_NAME}--website
     networks:
       - nginx-proxy-network
     expose:
-      - 3000 # For nginx proxy to find listen port
+      - 3000 # For nginx proxy to aut. discover listen port
 
   database:
     image: postgres # Use latest official postgres version
@@ -24,7 +24,7 @@ services:
       - internal_network
 
   webservice:
-    image: sw714/inciport-registry:api-${BRANCH_NAME}
+    image: ${DOCKERHUB_REPO?}:${BRANCH_NAME}--webservice
     depends_on:
       - database
     environment:
@@ -36,7 +36,7 @@ services:
       - internal_network
       - nginx-proxy-network
     expose:
-      - 5000 # For nginx proxy to find listen port
+      - 5000 # For nginx proxy to aut. discover listen port
 
 volumes:
   inciport_database:
